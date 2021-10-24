@@ -9,16 +9,11 @@ namespace PhotosViewer
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] Args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            string[] args = Environment.GetCommandLineArgs();
-            if (args.Length > 0)
-                Application.Run(new PhotosViewer(args));
-            else
-                Application.Run(new PhotosViewer());
+            Application.Run(new MainForm(Args));
         }
     }
 }

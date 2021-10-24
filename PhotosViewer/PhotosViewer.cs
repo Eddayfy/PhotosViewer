@@ -9,10 +9,10 @@ namespace PhotosViewer
 {
     public partial class PhotosViewer : Form
     {
-        private readonly List<string> ImagePathDirectory = new List<string>();
-        private int PictureIndex = 0;
-        private bool IsZoomOn = false;
-        private float PictureScale = 1.0f;
+        private readonly List<string> ImagePathDirectory;
+        private int PictureIndex;
+        private bool IsZoomOn;
+        private float PictureScale;
         private int PictureWidth;
         private int PictureHeight;
 
@@ -25,13 +25,17 @@ namespace PhotosViewer
         {
             InitializeComponent();
 
+            ImagePathDirectory = new List<string>();
             foreach (string file in Args)
-            {
                 if (IsValideImageFormat(file))
-                {
                     ImagePathDirectory.Add(file);
-                }
-            }
+        }
+
+        private void PhotosViewer_Load(object sender, EventArgs e)
+        {
+            PictureIndex = 0;
+            IsZoomOn = false;
+            PictureScale = 1.0f;
 
             if (ImagePathDirectory.Count != 0)
                 InitializeTheImage(ImagePathDirectory[PictureIndex]);
@@ -43,30 +47,23 @@ namespace PhotosViewer
             {
                 if (path.EndsWith(".gif"))
                 {
-                    PictureBox.Image = Image.FromFile(path);
-                    PictureBox.Visible = true;
+                    ImagePictureBox.Image = Image.FromFile(path);
+                    ImagePictureBox.Visible = true;
                     ImagePanel.BackgroundImage = null;
 
-                    PictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+                    ImagePictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
                 }
                 else
                 {
-                    PictureBox.Image = null;
-                    PictureBox.Visible = false;
+                    ImagePictureBox.Image = null;
+                    ImagePictureBox.Visible = false;
 
-                    Bitmap Bitmap = new Bitmap(path);
+                    Bitmap bitmap = new Bitmap(path);
 
-                    int Width = Bitmap.Width, Height = Bitmap.Height;
+                    int Width = (bitmap.Width > ImagePanel.Width) ? (ImagePanel.Width) : (bitmap.Width);
+                    int Height = (bitmap.Height > ImagePanel.Height) ? (ImagePanel.Height) : (bitmap.Height);
 
-                    if (Width > ImagePanel.Width)
-                        Width = ImagePanel.Width;
-
-                    if (Height > ImagePanel.Height)
-                        Height = ImagePanel.Height;
-
-                    Bitmap = new Bitmap(Image.FromFile(path), Width, Height);
-
-                    ImagePanel.BackgroundImage = Bitmap;
+                    ImagePanel.BackgroundImage = new Bitmap(Image.FromFile(path), Width, Height);
 
                     PictureWidth = Width;
                     PictureHeight = Height;
@@ -76,10 +73,13 @@ namespace PhotosViewer
 
                 this.Text = Path.GetFileName(path) + " - Photos Viewer";
             }
+
         }
 
         private bool IsValideImageFormat(string path)
         {
+            path = path.ToLower();
+
             if (Path.GetExtension(path) == ".jpg" || Path.GetExtension(path) == ".jpeg" || Path.GetExtension(path) == ".png"
                 || Path.GetExtension(path) == ".bmp" || Path.GetExtension(path) == ".gif" || Path.GetExtension(path) == ".ico")
                 return true;
@@ -104,15 +104,17 @@ namespace PhotosViewer
             OpenFileDialog OFD = new OpenFileDialog
             {
                 Title = "Open your Image",
-                Multiselect = false,
+                Multiselect = true,
                 Filter = "Image Files| *.jpg; *.jpeg; *.png; *.bmp; *.gif; *.ico"
             };
 
             if (OFD.ShowDialog() == DialogResult.OK)
             {
-                ImagePathDirectory.Clear();
-                ImagePathDirectory.Add(OFD.FileName);
                 PictureIndex = 0;
+
+                ImagePathDirectory.Clear();
+                foreach (string file in OFD.FileNames)
+                    ImagePathDirectory.Add(file);
 
                 InitializeTheImage(ImagePathDirectory[PictureIndex]);
             }
@@ -295,5 +297,6 @@ namespace PhotosViewer
 
             Process.Start(CurrentEXEFilePath);
         }
+
     }
 }

@@ -197,7 +197,6 @@
             // AppTimer
             // 
             this.AppTimer.Enabled = true;
-            this.AppTimer.Tick += new System.EventHandler(this.AppTimer_Tick);
             // 
             // PreviousPanel
             // 
@@ -243,8 +242,11 @@
             this.Name = "PhotosViewer";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Photos Viewer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PhotosViewer_FormClosing);
+            this.Load += new System.EventHandler(this.PhotosViewer_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.PhotosViewer_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.PhotosViewer_DragEnter);
+            this.Resize += new System.EventHandler(this.PhotosViewer_Resize);
             this.AppMenuStrip.ResumeLayout(false);
             this.AppMenuStrip.PerformLayout();
             this.ImagePanel.ResumeLayout(false);
